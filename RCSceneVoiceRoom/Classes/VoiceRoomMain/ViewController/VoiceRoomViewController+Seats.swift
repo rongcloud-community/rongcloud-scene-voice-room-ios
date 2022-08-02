@@ -6,6 +6,7 @@
 //
 
 import SVProgressHUD
+import RCSceneKit
 
 extension VoiceRoomViewController {
     @_dynamicReplacement(for: seatList)
@@ -28,11 +29,12 @@ extension VoiceRoomViewController {
             } else if isSitting() {
                 micButton.micState = voiceRoomInfo.isOwner ? .user : .connecting
             }
-
+            
+            guard let containerVC = self.parent as? RCSPageContainerController else { return }
             if seatList.contains(where: { $0.userId == Environment.currentUserId }) {
-                self.roomContainerAction?.disableSwitchRoom()
+                containerVC.setScrollable(false)
             } else if voiceRoomInfo.isOwner == false {
-                self.roomContainerAction?.enableSwitchRoom()
+                containerVC.setScrollable(true)
             }
         }
     }
@@ -123,7 +125,8 @@ extension VoiceRoomViewController {
                         SVProgressHUD.showInfo(withStatus: "上麦成功")
                     }
                     self?.roomState.connectState = .connecting
-                    self?.roomContainerAction?.disableSwitchRoom()
+                    guard let containerVC = self?.parent as? RCSPageContainerController else { return }
+                    containerVC.setScrollable(false)
                     completion?()
                 }
             } error: { [weak self] code, msg in
@@ -146,7 +149,8 @@ extension VoiceRoomViewController {
                 }
                 if !(self.currentUserRole() == .creator) {
                     self.roomState.connectState = .request
-                    self.roomContainerAction?.enableSwitchRoom()
+                    guard let containerVC = self.parent as? RCSPageContainerController else { return }
+                    containerVC.setScrollable(true)
                 }
                 RCSceneMusic.stop()
             }

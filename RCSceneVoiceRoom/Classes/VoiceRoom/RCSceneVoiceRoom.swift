@@ -17,14 +17,7 @@ public func RCVoiceRoomController(room: RCSceneRoom, creation: Bool = false) -> 
 }
 
 extension VoiceRoomViewController: RCRoomCycleProtocol {
-    func setRoomContainerAction(action: RCRoomContainerAction) {
-        self.roomContainerAction = action
-    }
-    
-    func setRoomFloatingAction(action: RCSceneRoomFloatingProtocol) {
-        self.floatingManager = action
-    }
-    
+
     func joinRoom(_ completion: @escaping (Result<Void, RCSceneError>) -> Void) {
         SceneRoomManager.shared.voice_join(voiceRoomInfo.roomId, complation: completion)
     }

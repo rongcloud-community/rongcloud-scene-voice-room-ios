@@ -4,6 +4,7 @@
 //
 //  Created by shaoshuai on 2021/6/18.
 //
+import RCSceneKit
 
 extension VoiceRoomViewController {
     @_dynamicReplacement(for: setupModules)
@@ -25,7 +26,7 @@ extension VoiceRoomViewController {
             VoiceRoomNotification.rejectManagePick.send(content: from)
         }))
         
-        if let fm = self.floatingManager, fm.showing {
+        if RCSPageFloaterManager.shared().showing() {
             UIApplication.shared.keyWindow()?.rootViewController?.present(alertVC, animated: true)
         } else {
             topmostController().present(alertVC, animated: true)
@@ -92,9 +93,7 @@ extension VoiceRoomViewController: RCVoiceRoomDelegate {
         print("speaking:\(isSpeaking),index:\(index),audioLevel:\(level)")
         if index == 0 {
             ownerView.setSpeakingState(isSpeaking: isSpeaking)
-            if let fm = self.floatingManager {
-                fm.setSpeakingState(isSpeaking: speaking)
-            }
+            RCSPageFloaterManager.shared().setSpeakingState(isSpeaking)
         } else {
             if let cell = collectionView.cellForItem(at: IndexPath(item: Int(index - 1), section: 0)) as? VoiceRoomSeatCollectionViewCell {
                 cell.setSpeakingState(isSpeaking: isSpeaking)

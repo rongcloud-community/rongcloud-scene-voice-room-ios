@@ -33,4 +33,7 @@ Pod::Spec.new do |s|
   s.dependency 'RCSceneRoom/RCSceneRoom'
   s.dependency 'RCSceneRoom/RCSceneAnalytics'
   
+  s.dependency 'RCSceneKit/RCSPageContainer'
+  s.dependency 'RCSceneKit/RCSPageFloater'
+  
 end

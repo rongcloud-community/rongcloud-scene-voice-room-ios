@@ -36,10 +36,10 @@ extension VoiceRoomViewController: RCRTCBroadcastDelegate {
         if room.isPrivate == 1 {
             navigator(.inputPassword(completion: { [weak self] password in
                 guard room.password == password else { return }
-                self?.roomContainerAction?.switchRoom(room)
+                self?.roomContainerSwitchRoom(room)
             }))
         } else {
-            self.roomContainerSwitchRoom(room)
+            roomContainerSwitchRoom(room)
         }
     }
     

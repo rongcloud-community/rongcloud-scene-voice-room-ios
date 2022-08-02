@@ -7,6 +7,7 @@
 
 import SVProgressHUD
 import RCSceneRoom
+import RCSceneKit
 
 extension VoiceRoomViewController {
     @_dynamicReplacement(for: setupModules)
@@ -52,9 +53,12 @@ extension VoiceRoomViewController: RCSceneLeaveViewProtocol {
             SVProgressHUD.showError(withStatus: "正在PK中， 无法进行该操作")
             return
         }
-        guard let fm = self.floatingManager, let parent = parent else { return }
-        fm.show(parent, superView: nil, animated: true)
+        let vc: UIViewController = parent ?? self
+        RCSPageFloaterManager.shared().show(with: vc, avatarImgUrl: voiceRoomInfo.themePictureUrl, animated: true)
         navigationController?.popViewController(animated: false)
+        guard let containerVC = vc as? RCSPageContainerController else { return }
+        guard let delegate = containerVC.delegate else { return }
+        RCSPageFloaterManager.shared().multiDelegates = NSArray(objects: delegate) as! [Any]
     }
 }
 

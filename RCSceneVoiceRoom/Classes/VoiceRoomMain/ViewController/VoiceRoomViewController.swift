@@ -7,6 +7,7 @@
 
 import Kingfisher
 import RCSceneRoom
+import RCSceneKit
 
 let alertTypeVideoAlreadyClose = "alertTypeVideoAlreadyClose"
 let alertTypeConfirmCloseRoom = "alertTypeConfirmCloseRoom"
@@ -17,7 +18,6 @@ struct managersWrapper: Codable {
 }
 
 class VoiceRoomViewController: UIViewController {
-    weak var roomContainerAction: RCRoomContainerAction?
     dynamic var kvRoomInfo: RCVoiceRoomInfo?
     dynamic var voiceRoomInfo: RCSceneRoom
     dynamic var seatList: [RCVoiceSeatInfo] = {
@@ -83,8 +83,6 @@ class VoiceRoomViewController: UIViewController {
     
     private let isCreate: Bool
     
-    var floatingManager: RCSceneRoomFloatingProtocol?
-    
     init(roomInfo: RCSceneRoom, isCreate: Bool = false) {
         voiceRoomInfo = roomInfo
         self.isCreate = isCreate
@@ -135,7 +133,22 @@ class VoiceRoomViewController: UIViewController {
     }
     
     func roomContainerSwitchRoom(_ room: RCSceneRoom) {
-        self.roomContainerAction?.switchRoom(room)
+        guard let containerVC = self.parent as? RCSPageContainerController else { return }
+        
+        if SceneRoomManager.shared.currentRoom?.roomType == room.roomType {
+            if let index = containerVC.pageItems.firstIndex(where: { $0.pageId == room.roomId }) {
+                containerVC.currentIndex = index
+                return
+            }
+        }
+        let item = RCSPageModel()
+        item.switchable = room.switchable
+        item.pageId = room.roomId
+        item.backgroudUrl = room.backgroundUrl
+        containerVC.pageItems = [item]
+        containerVC.reloadData()
+        containerVC.currentIndex = 0
+        containerVC.setScrollable(false)
     }
     
     private func buildLayout() {
@@ -273,9 +286,7 @@ extension VoiceRoomViewController {
             .voice_leave { [weak self] result in
                 SceneRoomManager.shared.currentRoom = nil
                 self?.backTrigger()
-                if let fm = self?.floatingManager {
-                    fm.hide()
-                }
+                RCSPageFloaterManager.shared().hide()
                 RCSceneMusic.clear()
                 switch result {
                 case .success:
