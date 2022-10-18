@@ -26,7 +26,7 @@ extension VoiceRoomViewController: RCRoomCycleProtocol {
     }
     
     func joinRoom(_ completion: @escaping (Result<Void, RCSceneError>) -> Void) {
-        SceneRoomManager.shared.voice_join(voiceRoomInfo.roomId, complation: completion)
+        SceneRoomManager.shared.voice_join(voiceRoomInfo.roomId, completion: completion)
     }
     
     func leaveRoom(_ completion: @escaping (Result<Void, RCSceneError>) -> Void) {

@@ -51,6 +51,10 @@ extension VoiceRoomViewController: RCVoiceRoomDelegate {
             getPKStatus()
         }
         roomInfoView.userNumberNeedUpdate()
+        
+        let states = RCVoiceRoomEngine.sharedInstance().microphoneStates()
+        debugPrint(states)
+        /// update UI for remote user mic state
     }
     
     func roomInfoDidUpdate(_ roomInfo: RCVoiceRoomInfo) {
@@ -87,27 +91,48 @@ extension VoiceRoomViewController: RCVoiceRoomDelegate {
     }
     
 
-    func seatSpeakingStateChanged(_ speaking: Bool, at index: Int, audioLevel level: Int) {
-        let isSpeaking = level > 4
-        print("speaking:\(isSpeaking),index:\(index),audioLevel:\(level)")
-        if index == 0 {
-            ownerView.setSpeakingState(isSpeaking: isSpeaking)
-            if let fm = self.floatingManager {
-                fm.setSpeakingState(isSpeaking: speaking)
+//    func seatSpeakingStateChanged(_ speaking: Bool, at index: Int, audioLevel level: Int) {
+//        let isSpeaking = level > 4
+//        debugPrint("speaking:\(isSpeaking),index:\(index),audioLevel:\(level)")
+//        if index == 0 {
+//            ownerView.setSpeakingState(isSpeaking: isSpeaking)
+//            if let fm = self.floatingManager {
+//                fm.setSpeakingState(isSpeaking: speaking)
+//            }
+//        } else {
+//            if let cell = collectionView.cellForItem(at: IndexPath(item: Int(index - 1), section: 0)) as? VoiceRoomSeatCollectionViewCell {
+//                cell.setSpeakingState(isSpeaking: isSpeaking)
+//            }
+//        }
+//    }
+    
+// will be deprecated
+//    func speakingStateDidChange(_ seatIndex: UInt, speakingState isSpeaking: Bool) {
+//
+//    }
+    
+    func audioLevelDidChange(_ levels: [RCSAudioLevel]) {
+        for item in levels {
+            let speaking = item.level > 3
+            if let index = seatList.firstIndex(where: { $0.userId == item.userId }) {
+                if index == 0 {
+                    ownerView.setSpeakingState(isSpeaking: speaking)
+                    floatingManager?.setSpeakingState(isSpeaking: speaking)
+                } else {
+                    let indexPath = IndexPath(item: Int(index - 1), section: 0)
+                    (collectionView.cellForItem(at: indexPath) as? VoiceRoomSeatCollectionViewCell)?
+                        .setSpeakingState(isSpeaking: speaking)
+                }
             }
-        } else {
-            if let cell = collectionView.cellForItem(at: IndexPath(item: Int(index - 1), section: 0)) as? VoiceRoomSeatCollectionViewCell {
-                cell.setSpeakingState(isSpeaking: isSpeaking)
-            }
+            debugPrint("audio level did change: roomId = \(item.roomId), userId=\(item.userId), level=\(item.level)")
         }
     }
-    
-    // will be deprecated
-    func speakingStateDidChange(_ seatIndex: UInt, speakingState isSpeaking: Bool) {
-        
+
+    func microphoneStateDidChange(_ state: RCSMicrophoneState) {
+        debugPrint("microphoneStateDidChange room: \(state.roomId) user: \(state.userId) state: \(state.disable)")
     }
     
-    // room distory call back
+    // room destroy call back
     func roomDidClosed() {
         isRoomClosed = true
         navigator(.voiceRoomAlert(title: "当前直播已结束",

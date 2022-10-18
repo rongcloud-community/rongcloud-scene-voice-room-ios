@@ -116,6 +116,7 @@ class VoiceRoomViewController: UIViewController {
         UserDefaults.standard.increaseFeedbackCountdown()
         RCIM.shared().addReceiveMessageDelegate(self)
         RCSceneMusic.join(voiceRoomInfo, bubbleView: musicInfoBubbleView!)
+        RCVoiceRoomEngine.sharedInstance().enablePKUserAudioLevel = true
     }
     
     override func viewWillAppear(_ animated: Bool) {

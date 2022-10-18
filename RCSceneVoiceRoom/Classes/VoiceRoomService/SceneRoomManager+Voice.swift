@@ -54,7 +54,7 @@ extension SceneRoomManager {
     /// 如果有kv信息，默认为创建
     func voice_join(_ roomId: String,
               roomKVInfo: RCVoiceRoomInfo? = nil,
-              complation: @escaping (Result<Void, RCSceneError>) -> Void) {
+              completion: @escaping (Result<Void, RCSceneError>) -> Void) {
         queue.async {
             var result = Result<Void, RCSceneError>.success(())
             let semaphore = DispatchSemaphore(value: 0)
@@ -84,14 +84,14 @@ extension SceneRoomManager {
             voiceRoomService.userUpdateCurrentRoom(roomId: roomId) { _ in}
             DispatchQueue.main.async {
                 switch wait {
-                case .success: complation(result)
-                case .timedOut: complation(.failure(RCSceneError("加入房间超时")))
+                case .success: completion(result)
+                case .timedOut: completion(.failure(RCSceneError("加入房间超时")))
                 }
             }
         }
     }
     
-    func voice_leave(_ complation: @escaping (Result<Void, RCSceneError>) -> Void) {
+    func voice_leave(_ completion: @escaping (Result<Void, RCSceneError>) -> Void) {
         queue.async {
             var result = Result<Void, RCSceneError>.success(())
             let semaphore = DispatchSemaphore(value: 0)
@@ -110,8 +110,8 @@ extension SceneRoomManager {
             voiceRoomService.userUpdateCurrentRoom(roomId: "") { _ in}
             DispatchQueue.main.async {
                 switch wait {
-                case .success: complation(result)
-                case .timedOut: complation(.failure(RCSceneError("离开房间超时")))
+                case .success: completion(result)
+                case .timedOut: completion(.failure(RCSceneError("离开房间超时")))
                 }
             }
         }
