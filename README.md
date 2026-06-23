@@ -1,3 +1,8 @@
+> [!WARNING]
+> ⚠️ **暂停维护说明**
+>
+> 该工程已不再维护。
+
 <h1 align="center"> 语聊房 </h>
 
 <p align="center">
